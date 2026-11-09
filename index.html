@@ -101,35 +101,30 @@
 
   /* Listen */
   section { margin-top: 88px; }
-  .scene { position: relative; margin: 0 -1.7rem; }
-  .scene { display: grid; }
-  .scene img { grid-area: 1 / 1; display: block; width: 100%; height: auto; aspect-ratio: 848 / 1264; object-fit: cover; opacity: 0;
-    transition: opacity .7s var(--ease);
-    -webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000 14%, #000 70%, transparent 100%);
-            mask-image: linear-gradient(to bottom, transparent 0%, #000 14%, #000 70%, transparent 100%); }
-  .scene img.on { opacity: .92; }
-
-  .player { display: flex; align-items: center; gap: 20px; position: relative; }
-  .scene + .listen .player { margin-top: -40px; }
-  .listen + .listen { margin-top: 44px; }
-  @media (min-width: 640px) { .scene { margin: 0 auto; max-width: 440px; } .scene + .listen .player { margin-top: 24px; } }
+  /* Two sample cards, side by side; each keeps its own scene. */
+  .samples { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; max-width: 480px; }
+  /* The track sits at the bottom of each card, so the two line up when a title wraps. */
+  .listen { min-width: 0; display: flex; flex-direction: column; }
+  .listen .story-cat { margin-bottom: auto; padding-bottom: 10px; }
+  .scene { position: relative; border-radius: 18px; overflow: hidden; background: var(--well); }
+  .scene img { display: block; width: 100%; height: auto; aspect-ratio: 4 / 5; object-fit: cover;
+    object-position: 50% 65%; opacity: .92; }
   .play {
-    flex: none; width: 76px; height: 76px; border-radius: 50%; border: 0; cursor: pointer;
+    position: absolute; left: 12px; bottom: 12px;
+    width: 52px; height: 52px; border-radius: 50%; border: 0; cursor: pointer;
     background: var(--text); color: var(--on-cream); display: grid; place-items: center;
     transition: opacity .3s var(--ease); -webkit-tap-highlight-color: transparent;
   }
   .play:active { opacity: .72; }
-  .play svg { width: 26px; height: 26px; }
+  .play svg { width: 20px; height: 20px; }
   .play .i-pause { display: none; }
   .play[aria-pressed="true"] .i-play { display: none; }
   .play[aria-pressed="true"] .i-pause { display: block; }
-  .meta { min-width: 0; flex: 1; }
-  .story-title { font-size: 1.3rem; line-height: 1.25; margin: 0; }
-  .story-cat { color: var(--dim); font-size: .92rem; margin: 2px 0 12px; }
+  .story-title { font-size: 1.12rem; line-height: 1.25; margin: 14px 0 0; }
+  .story-cat { color: var(--dim); font-size: .86rem; margin: 2px 0 10px; }
   .track { height: 3px; background: var(--hairline); border-radius: 100px; overflow: hidden; }
-  .track span { display: block; height: 100%; width: 0; background: var(--glow); transition: background .7s var(--ease); }
-  .time { color: var(--faint); font-size: .8rem; margin-top: 6px; font-variant-numeric: tabular-nums; }
-  .blurb { color: var(--dim); margin: 28px 0 0; }
+  .track span { display: block; height: 100%; width: 0; background: var(--c); }
+  .time { color: var(--faint); font-size: .78rem; margin-top: 6px; font-variant-numeric: tabular-nums; }
 
   /* Cats — a snap row, never a grid, like the Gallery */
   .cats {
@@ -146,6 +141,8 @@
   .portrait img { width: 100%; height: 100%; object-fit: contain; }
   .cat h3 { font-size: 1.35rem; margin: 0 0 4px; }
   .cat p { color: var(--dim); font-size: .88rem; line-height: 1.4; margin: 0; }
+  .cats-lede { color: var(--dim); max-width: 30em; margin: 0 0 28px; }
+  .more { color: var(--dim); margin: 16px 0 0; }
   .cat .soon { color: var(--faint); font-size: .76rem; margin-top: 8px; }
   /* Wide enough for all five: no scrolling row to hide one off the edge. */
   @media (min-width: 700px) {
@@ -194,50 +191,41 @@
     <p class="note rise d2">For iPhone</p>
   </header>
 
-  <section aria-labelledby="listen-h">
-    <p class="micro" id="listen-h">The start of a first night</p>
-    <!-- The scene shows whichever cat was played last. -->
-    <div class="scene">
-      <img data-cat="luna" class="on" src="assets/scene-luna.webp" width="848" height="1264" alt="Night over a canal, fences and rooftops in blue moonlight." loading="lazy">
-      <img data-cat="cachito" src="assets/scene-cachito.webp" width="848" height="1264" alt="A cat walking through long grass in front of a low moon, rooftops behind." loading="lazy">
-    </div>
-    <!-- preload="none": nothing downloads until someone presses play. -->
-    <div class="listen" data-cat="luna" data-accent="#8FA6C4" data-total="103">
-      <div class="player">
-        <button class="play" type="button" aria-pressed="false" data-label="the start of Along the Tops of Things, read by a man" aria-label="Play the start of Along the Tops of Things, read by a man">
+  <!-- preload="none": nothing downloads until someone presses play. -->
+  <section class="samples" aria-label="Listen to the start of a story">
+    <div class="listen" style="--c:#8FA6C4" data-total="103">
+      <div class="scene">
+        <img src="assets/scene-luna.webp" width="848" height="1264" alt="Night over a canal, fences and rooftops in blue moonlight." loading="lazy">
+        <button class="play" type="button" aria-pressed="false" data-label="the start of Along the Tops of Things" aria-label="Play the start of Along the Tops of Things">
           <svg class="i-play" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v15l13-7.5z" fill="currentColor"/></svg>
           <svg class="i-pause" viewBox="0 0 24 24" aria-hidden="true"><path d="M6.5 4.5h4v15h-4zM13.5 4.5h4v15h-4z" fill="currentColor"/></svg>
         </button>
-        <div class="meta">
-          <p class="story-title serif">Along the Tops of Things</p>
-          <p class="story-cat">Luna · read by a man</p>
-          <div class="track" aria-hidden="true"><span></span></div>
-          <div class="time" aria-hidden="true">1:43</div>
-        </div>
       </div>
-      <p class="blurb">Down the wooden steps, along the fences, out to the canal and back.</p>
+      <p class="story-title serif">Along the Tops of Things</p>
+      <p class="story-cat">Luna</p>
+      <div class="track" aria-hidden="true"><span></span></div>
+      <div class="time" aria-hidden="true">1:43</div>
       <audio src="assets/luna-sample.mp3" preload="none"></audio>
     </div>
-    <div class="listen" data-cat="cachito" data-accent="#E0A85C" data-total="92">
-      <div class="player">
-        <button class="play" type="button" aria-pressed="false" data-label="the start of The Long Way Down, read by a woman" aria-label="Play the start of The Long Way Down, read by a woman">
+    <div class="listen" style="--c:#E0A85C" data-total="92">
+      <div class="scene">
+        <img src="assets/scene-cachito.webp" width="848" height="1264" alt="A cat walking through long grass in front of a low moon, rooftops behind." loading="lazy">
+        <button class="play" type="button" aria-pressed="false" data-label="the start of The Long Way Down" aria-label="Play the start of The Long Way Down">
           <svg class="i-play" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v15l13-7.5z" fill="currentColor"/></svg>
           <svg class="i-pause" viewBox="0 0 24 24" aria-hidden="true"><path d="M6.5 4.5h4v15h-4zM13.5 4.5h4v15h-4z" fill="currentColor"/></svg>
         </button>
-        <div class="meta">
-          <p class="story-title serif">The Long Way Down</p>
-          <p class="story-cat">Cachito · read by a woman</p>
-          <div class="track" aria-hidden="true"><span></span></div>
-          <div class="time" aria-hidden="true">1:32</div>
-        </div>
       </div>
-      <p class="blurb">Out through the cat door, over the roofs, down through the village, and back up.</p>
+      <p class="story-title serif">The Long Way Down</p>
+      <p class="story-cat">Cachito</p>
+      <div class="track" aria-hidden="true"><span></span></div>
+      <div class="time" aria-hidden="true">1:32</div>
       <audio src="assets/cachito-sample.mp3" preload="none"></audio>
     </div>
   </section>
 
   <section aria-labelledby="cats-h">
     <p class="micro" id="cats-h">The cats</p>
+    <p class="cats-lede">Every cat has a character of their own. Some are shy and keep to the edges, some are bold and playful, and each one spends the night the way only they would.</p>
     <ul class="cats">
       <li class="cat" tabindex="0" data-accent="#8FA6C4">
         <div class="portrait" style="--c:#8FA6C4"><img src="assets/cats/luna.webp" alt="" loading="lazy"></div>
@@ -262,6 +250,7 @@
         <p class="soon">Coming soon</p>
       </li>
     </ul>
+    <p class="more">More cats and more stories are on the way.</p>
   </section>
 
   <section aria-labelledby="day-h">
@@ -288,9 +277,8 @@
 
 <script>
   // The sample players. Nothing plays until a button is pressed, and only one
-  // plays at a time. The scene and the accent follow the cat being played.
+  // plays at a time.
   (function () {
-    var root = document.documentElement;
     var listens = document.querySelectorAll('.listen');
     function fmt(s) { s = Math.max(0, Math.round(s)); return Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0'); }
     listens.forEach(function (el) {
@@ -306,10 +294,6 @@
       btn.addEventListener('click', function () {
         if (audio.paused) {
           document.querySelectorAll('.listen audio').forEach(function (a) { if (a !== audio) a.pause(); });
-          document.querySelectorAll('.scene img').forEach(function (img) {
-            img.classList.toggle('on', img.dataset.cat === el.dataset.cat);
-          });
-          root.style.setProperty('--glow', el.dataset.accent);
           audio.play().catch(function () { set(false); });
         } else { audio.pause(); }
       });

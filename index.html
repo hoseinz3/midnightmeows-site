@@ -102,12 +102,17 @@
   /* Listen */
   section { margin-top: 88px; }
   .scene { position: relative; margin: 0 -1.7rem; }
-  .scene img { display: block; width: 100%; height: auto; aspect-ratio: 848 / 1264; object-fit: cover; opacity: .92;
+  .scene { display: grid; }
+  .scene img { grid-area: 1 / 1; display: block; width: 100%; height: auto; aspect-ratio: 848 / 1264; object-fit: cover; opacity: 0;
+    transition: opacity .7s var(--ease);
     -webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000 14%, #000 70%, transparent 100%);
             mask-image: linear-gradient(to bottom, transparent 0%, #000 14%, #000 70%, transparent 100%); }
-  @media (min-width: 640px) { .scene { margin: 0 auto; max-width: 440px; } .player { margin-top: 24px; } }
+  .scene img.on { opacity: .92; }
 
-  .player { display: flex; align-items: center; gap: 20px; margin-top: -40px; position: relative; }
+  .player { display: flex; align-items: center; gap: 20px; position: relative; }
+  .scene + .listen .player { margin-top: -40px; }
+  .listen + .listen { margin-top: 44px; }
+  @media (min-width: 640px) { .scene { margin: 0 auto; max-width: 440px; } .scene + .listen .player { margin-top: 24px; } }
   .play {
     flex: none; width: 76px; height: 76px; border-radius: 50%; border: 0; cursor: pointer;
     background: var(--text); color: var(--on-cream); display: grid; place-items: center;
@@ -190,23 +195,45 @@
   </header>
 
   <section aria-labelledby="listen-h">
-    <p class="micro" id="listen-h">The start of Luna's first night</p>
-    <div class="scene"><img src="assets/scene-luna.webp" width="848" height="1264" alt="Night over a canal, fences and rooftops in blue moonlight." loading="lazy"></div>
-    <div class="player">
-      <button class="play" type="button" aria-pressed="false" aria-label="Play the start of Along the Tops of Things">
-        <svg class="i-play" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v15l13-7.5z" fill="currentColor"/></svg>
-        <svg class="i-pause" viewBox="0 0 24 24" aria-hidden="true"><path d="M6.5 4.5h4v15h-4zM13.5 4.5h4v15h-4z" fill="currentColor"/></svg>
-      </button>
-      <div class="meta">
-        <p class="story-title serif">Along the Tops of Things</p>
-        <p class="story-cat">Luna</p>
-        <div class="track" aria-hidden="true"><span></span></div>
-        <div class="time" aria-hidden="true">1:43</div>
-      </div>
+    <p class="micro" id="listen-h">The start of a first night</p>
+    <!-- The scene shows whichever cat was played last. -->
+    <div class="scene">
+      <img data-cat="luna" class="on" src="assets/scene-luna.webp" width="848" height="1264" alt="Night over a canal, fences and rooftops in blue moonlight." loading="lazy">
+      <img data-cat="cachito" src="assets/scene-cachito.webp" width="848" height="1264" alt="A cat walking through long grass in front of a low moon, rooftops behind." loading="lazy">
     </div>
-    <p class="blurb">Down the wooden steps, along the fences, out to the canal and back.</p>
     <!-- preload="none": nothing downloads until someone presses play. -->
-    <audio src="assets/luna-sample.mp3" preload="none"></audio>
+    <div class="listen" data-cat="luna" data-accent="#8FA6C4" data-total="103">
+      <div class="player">
+        <button class="play" type="button" aria-pressed="false" data-label="the start of Along the Tops of Things, read by a man" aria-label="Play the start of Along the Tops of Things, read by a man">
+          <svg class="i-play" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v15l13-7.5z" fill="currentColor"/></svg>
+          <svg class="i-pause" viewBox="0 0 24 24" aria-hidden="true"><path d="M6.5 4.5h4v15h-4zM13.5 4.5h4v15h-4z" fill="currentColor"/></svg>
+        </button>
+        <div class="meta">
+          <p class="story-title serif">Along the Tops of Things</p>
+          <p class="story-cat">Luna · read by a man</p>
+          <div class="track" aria-hidden="true"><span></span></div>
+          <div class="time" aria-hidden="true">1:43</div>
+        </div>
+      </div>
+      <p class="blurb">Down the wooden steps, along the fences, out to the canal and back.</p>
+      <audio src="assets/luna-sample.mp3" preload="none"></audio>
+    </div>
+    <div class="listen" data-cat="cachito" data-accent="#E0A85C" data-total="92">
+      <div class="player">
+        <button class="play" type="button" aria-pressed="false" data-label="the start of The Long Way Down, read by a woman" aria-label="Play the start of The Long Way Down, read by a woman">
+          <svg class="i-play" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v15l13-7.5z" fill="currentColor"/></svg>
+          <svg class="i-pause" viewBox="0 0 24 24" aria-hidden="true"><path d="M6.5 4.5h4v15h-4zM13.5 4.5h4v15h-4z" fill="currentColor"/></svg>
+        </button>
+        <div class="meta">
+          <p class="story-title serif">The Long Way Down</p>
+          <p class="story-cat">Cachito · read by a woman</p>
+          <div class="track" aria-hidden="true"><span></span></div>
+          <div class="time" aria-hidden="true">1:32</div>
+        </div>
+      </div>
+      <p class="blurb">Out through the cat door, over the roofs, down through the village, and back up.</p>
+      <audio src="assets/cachito-sample.mp3" preload="none"></audio>
+    </div>
   </section>
 
   <section aria-labelledby="cats-h">
@@ -260,28 +287,40 @@
 </main>
 
 <script>
-  // The sample player. Nothing plays until the button is pressed.
+  // The sample players. Nothing plays until a button is pressed, and only one
+  // plays at a time. The scene and the accent follow the cat being played.
   (function () {
-    var audio = document.querySelector('audio');
-    var btn = document.querySelector('.play');
-    var bar = document.querySelector('.track span');
-    var time = document.querySelector('.time');
-    var total = 103;
+    var root = document.documentElement;
+    var listens = document.querySelectorAll('.listen');
     function fmt(s) { s = Math.max(0, Math.round(s)); return Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0'); }
-    function set(playing) {
-      btn.setAttribute('aria-pressed', playing ? 'true' : 'false');
-      btn.setAttribute('aria-label', (playing ? 'Pause' : 'Play') + ' the start of Along the Tops of Things');
-    }
-    btn.addEventListener('click', function () {
-      if (audio.paused) { audio.play().catch(function () { set(false); }); } else { audio.pause(); }
-    });
-    audio.addEventListener('play', function () { set(true); });
-    audio.addEventListener('pause', function () { set(false); });
-    audio.addEventListener('ended', function () { audio.currentTime = 0; set(false); });
-    audio.addEventListener('timeupdate', function () {
-      var d = audio.duration || total;
-      bar.style.width = (audio.currentTime / d * 100) + '%';
-      time.textContent = audio.currentTime > 0 ? '-' + fmt(d - audio.currentTime) : fmt(d);
+    listens.forEach(function (el) {
+      var audio = el.querySelector('audio');
+      var btn = el.querySelector('.play');
+      var bar = el.querySelector('.track span');
+      var time = el.querySelector('.time');
+      var total = +el.dataset.total;
+      function set(playing) {
+        btn.setAttribute('aria-pressed', playing ? 'true' : 'false');
+        btn.setAttribute('aria-label', (playing ? 'Pause ' : 'Play ') + btn.dataset.label);
+      }
+      btn.addEventListener('click', function () {
+        if (audio.paused) {
+          document.querySelectorAll('.listen audio').forEach(function (a) { if (a !== audio) a.pause(); });
+          document.querySelectorAll('.scene img').forEach(function (img) {
+            img.classList.toggle('on', img.dataset.cat === el.dataset.cat);
+          });
+          root.style.setProperty('--glow', el.dataset.accent);
+          audio.play().catch(function () { set(false); });
+        } else { audio.pause(); }
+      });
+      audio.addEventListener('play', function () { set(true); });
+      audio.addEventListener('pause', function () { set(false); });
+      audio.addEventListener('ended', function () { audio.currentTime = 0; set(false); });
+      audio.addEventListener('timeupdate', function () {
+        var d = audio.duration || total;
+        bar.style.width = (audio.currentTime / d * 100) + '%';
+        time.textContent = audio.currentTime > 0 ? '-' + fmt(d - audio.currentTime) : fmt(d);
+      });
     });
   })();
 

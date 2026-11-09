@@ -190,10 +190,10 @@
   </header>
 
   <section aria-labelledby="listen-h">
-    <p class="micro" id="listen-h">A minute of Luna's first night</p>
+    <p class="micro" id="listen-h">The start of Luna's first night</p>
     <div class="scene"><img src="assets/scene-luna.webp" width="848" height="1264" alt="Night over a canal, fences and rooftops in blue moonlight." loading="lazy"></div>
     <div class="player">
-      <button class="play" type="button" aria-pressed="false" aria-label="Play a minute of Along the Tops of Things">
+      <button class="play" type="button" aria-pressed="false" aria-label="Play the start of Along the Tops of Things">
         <svg class="i-play" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v15l13-7.5z" fill="currentColor"/></svg>
         <svg class="i-pause" viewBox="0 0 24 24" aria-hidden="true"><path d="M6.5 4.5h4v15h-4zM13.5 4.5h4v15h-4z" fill="currentColor"/></svg>
       </button>
@@ -201,7 +201,7 @@
         <p class="story-title serif">Along the Tops of Things</p>
         <p class="story-cat">Luna</p>
         <div class="track" aria-hidden="true"><span></span></div>
-        <div class="time" aria-hidden="true">1:14</div>
+        <div class="time" aria-hidden="true">1:43</div>
       </div>
     </div>
     <p class="blurb">Down the wooden steps, along the fences, out to the canal and back.</p>
@@ -266,11 +266,11 @@
     var btn = document.querySelector('.play');
     var bar = document.querySelector('.track span');
     var time = document.querySelector('.time');
-    var total = 74;
+    var total = 103;
     function fmt(s) { s = Math.max(0, Math.round(s)); return Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0'); }
     function set(playing) {
       btn.setAttribute('aria-pressed', playing ? 'true' : 'false');
-      btn.setAttribute('aria-label', (playing ? 'Pause' : 'Play') + ' a minute of Along the Tops of Things');
+      btn.setAttribute('aria-label', (playing ? 'Pause' : 'Play') + ' the start of Along the Tops of Things');
     }
     btn.addEventListener('click', function () {
       if (audio.paused) { audio.play().catch(function () { set(false); }); } else { audio.pause(); }
